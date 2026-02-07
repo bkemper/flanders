@@ -11,8 +11,24 @@ import { Construct } from "constructs";
 
 /**
  *  folder based route definition
- *  integration configuration - region, timeout, payload format
+ *  integrations
+ *    - Lambda function - invokes when the route receives a request.
+ *    - HTTP URI - sends the request to the URL specified using the HTTP method defined. ’ANY’ indicates that API Gateway uses the same method it receives from the caller to call your integration.
+ *    - Private resource - sends the request through your VPC link to an Application Load Balancer, Network Load Balancer, or AWS Cloud Map service
+ *    - EventBridge - put event
+ *    - SQS - send, receive, or delete message or purge queue
+ *    - AppConfig - get configuration
+ *    - Kinesis Data Streams - put record
+ *    - Step Functions - start, stop, start sync
  *  authorization for IAM + Cognito
+ *  cross-origin resource sharing
+ *  route metrics
+ *  route throttling
+ *  custom domain
+ *  usage plans
+ *  api keys
+ *  client certificates
+ *  portals
  *  export OpenAPI spec for documentation
  * */ 
 export class ApiStack extends Stack {
@@ -28,6 +44,7 @@ export class ApiStack extends Stack {
       description: "Flanders API – routes mapped to separate Lambdas for per-route permissions",
     });
 
+    // @todo understand stage variables
     gateway.addStage("default", {
       accessLogSettings: {
         destination: new LogGroupLogDestination(accessLogGroup),
@@ -54,6 +71,12 @@ export class ApiStack extends Stack {
       path: "/{proxy+}",
       methods: [HttpMethod.GET],
       integration: apiIntegration,
+    });
+
+    new CfnOutput(this, "ApiId", {
+      description: "API Gateway HTTP API ID (use for: aws apigatewayv2 export-api --api-id <id> ...)",
+      value: gateway.apiId,
+      exportName: `${this.stackName}-ApiId`,
     });
 
     new CfnOutput(this, "ApiUrl", {

@@ -1,17 +1,27 @@
 {
   "name": "@flanders/api",
-  "version": "0.0.1",
-  "type": "module",
+  "version": "0.1.0",
+  "bin": {
+    "api": "bin/api.js"
+  },
   "scripts": {
-    "build": "bun build src/server.ts --outdir ./dist --target bun",
-    "dev": "bun run --watch src/server.ts",
-    "start": "bun run src/server.ts",
-    "test": "bun test"
+    "cdk:bootstrap": "cdk bootstrap --profile flanders-dev",
+    "cdk:deploy": "cdk deploy --profile flanders-dev",
+    "login": "aws sso login --profile flanders-dev"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/aws-lambda": "^8.10.145",
+    "@types/jest": "^30",
+    "@types/node": "^24.10.1",
+    "esbuild": "^0.21.0",
+    "jest": "^30",
+    "ts-jest": "^29",
+    "aws-cdk": "2.1105.0",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.9.3"
   },
-  "engines": {
-    "bun": ">=1.0.0"
+  "dependencies": {
+    "aws-cdk-lib": "^2.237.1",
+    "constructs": "^10.0.0"
   }
 }

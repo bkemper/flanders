@@ -4,10 +4,15 @@
   "description": "",
   "scripts": {
     "api": "pnpm --filter api",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "infra": "pnpm --filter infra",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "web": "pnpm --filter web"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.10.0"
+  "packageManager": "pnpm@10.10.0",
+  "devDependencies": {
+    "aws-cdk": "^2.1105.0"
+  }
 }

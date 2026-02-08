@@ -6,11 +6,7 @@ settings:
 
 importers:
 
-  .:
-    devDependencies:
-      aws-cdk:
-        specifier: ^2.1105.0
-        version: 2.1105.0
+  .: {}
 
   api:
     dependencies:

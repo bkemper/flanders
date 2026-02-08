@@ -1,4 +1,7 @@
+engineStrict: true
+
 packages:
   - 'api'
   - 'docs'
   - 'www'
+

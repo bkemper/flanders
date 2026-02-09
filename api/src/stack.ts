@@ -3,6 +3,7 @@ import { CfnOutput, Duration, Stack, StackProps } from "aws-cdk-lib/core";
 import { HttpApi, HttpMethod, LogGroupLogDestination, PayloadFormatVersion } from "aws-cdk-lib/aws-apigatewayv2";
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import { AccessLogFormat } from "aws-cdk-lib/aws-apigateway";
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
@@ -64,13 +65,38 @@ export class ApiStack extends Stack {
     // @todo understand parameter mapping
     const apiIntegration = new HttpLambdaIntegration("ApiIntegration", apiLambda, {
       payloadFormatVersion: PayloadFormatVersion.VERSION_2_0,
-      timeout: Duration.seconds(30)
+      timeout: Duration.seconds(29)
     });
 
     gateway.addRoutes({
       path: "/{proxy+}",
       methods: [HttpMethod.GET],
       integration: apiIntegration,
+    });
+
+    const costLambda = new NodejsFunction(this, "CostLambda", {
+      description: "handles cost api requests",
+      entry: path.join(__dirname, "routes/control/cost/get.ts"),
+      handler: "handler",
+      runtime: lambda.Runtime.NODEJS_22_X,
+    });
+
+    costLambda.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['ce:GetCostAndUsage'],
+      resources: ['*'], // Cost Explorer requires '*' for this action
+      effect: iam.Effect.ALLOW,
+    }));
+
+    // @todo understand parameter mapping
+    const costIntegration = new HttpLambdaIntegration("CostIntegration", costLambda, {
+      payloadFormatVersion: PayloadFormatVersion.VERSION_2_0,
+      timeout: Duration.seconds(29)
+    });
+
+    gateway.addRoutes({
+      path: "/control/cost",
+      methods: [HttpMethod.GET],
+      integration: costIntegration,
     });
 
     new CfnOutput(this, "ApiId", {

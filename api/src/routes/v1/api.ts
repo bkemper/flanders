@@ -4,10 +4,6 @@ import type {
   Context,
 } from "aws-lambda";
 
-export const routeConfiguration = {
-  description: "handles all api requests"
-};
-
 export async function handler(
   event: APIGatewayProxyEventV2,
   _context: Context,
